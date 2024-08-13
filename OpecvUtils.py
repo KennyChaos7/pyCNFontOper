@@ -21,20 +21,27 @@ def unwrap_n_replace(img_path: str):
     # cv2.imshow("output", img)
     output_filename = datetime.datetime.now().strftime('%Y%m%d%H%M%S') + ".png"
     cv2.imwrite(BASE_PATH+output_filename, img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
     return output_filename
 
 
 def compare_img(img1path: str, img2path: str):
+    img1path = BASE_PATH + unwrap_n_replace(img_path=img1path)
     img1 = cv2.imread(img1path)
     img2 = cv2.imread(img2path)
     size = (int(500), int(500))
     img1 = cv2.resize(img1, size, cv2.INTER_AREA)
     img2 = cv2.resize(img2, size, cv2.INTER_AREA)
-    img1_gray_mat = cv2.cvtColor(img1, cv2.COLOR_BGRA2GRAY)
-    img2_gray_mat = cv2.cvtColor(img2, cv2.COLOR_BGRA2GRAY)
-    img1_hist = cv2.calcHist(img1_gray_mat,[0], None, [255], [0,256])
-    img2_hist = cv2.calcHist(img2_gray_mat, [0], None, [255], [0, 256])
-    ssim = cv2.compareHist(img1_hist, img2_hist, cv2.HISTCMP_CORREL)
-    return ssim
+    img1_gray_mat = cv2.cvtColor(img1, cv2.COLOR_BGRA2GRAY, cv2.CV_8UC3)
+    img2_gray_mat = cv2.cvtColor(img2, cv2.COLOR_BGRA2GRAY, cv2.CV_8UC3)
+    img1_hist = cv2.calcHist(img1_gray_mat, [0], None, [255], [0, 255])
+    img2_hist = cv2.calcHist(img2_gray_mat, [0], None, [255], [0, 255])
+    cv2.imshow("img1_gray_mat", img1_gray_mat)
+    cv2.imshow("img2_gray_mat", img2_gray_mat)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    # ssim = cv2.compareHist(img1_hist, img2_hist, cv2.HISTCMP_CORREL)
+    diff = cv2.absdiff(img1_gray_mat, img2_gray_mat)
+    mse = np.mean(diff * 2)
+    return mse
