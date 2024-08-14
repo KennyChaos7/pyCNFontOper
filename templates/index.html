@@ -32,9 +32,10 @@
             http_get.onreadystatechange=(e)=>{
                 console.log(http_get.response)
                  if (http_get.status === 200 && http_get.response !== '' && http_get.readyState === 4) {
+                     let resp = JSON.parse(http_get.response);
                      var img = new Image();
-                     img.src = 'static/' + http_get.response;
-                     document.getElementById('server_upload_filename_right').innerText = http_get.response
+                     img.src = resp.filepath;
+                     document.getElementById('server_upload_filename_right').innerText = resp.filename
                      document.body.appendChild(img)
                  }
             }
@@ -95,7 +96,8 @@
                             let resp = JSON.parse(response);
                             console.log("resp:", resp.filename);
                             var img = new Image();
-                            img.src = 'static/' + resp.filename;
+                            {#img.src = 'static/png/' + resp.filename;#}
+                            img.src = resp.filepath
                             document.body.appendChild(img);
                             if (document.getElementById('server_upload_filename_left').innerText.trim() !== 'null') {
                                 document.getElementById('server_upload_filename_right').innerText = resp.filename;

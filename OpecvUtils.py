@@ -1,8 +1,9 @@
 import numpy as np
 import cv2
 import datetime
+import os
 from skimage.metrics import structural_similarity
-BASE_PATH = 'static/'
+BASE_PATH = 'static/png'
 
 
 def unwrap_n_replace(img_path: str):
@@ -21,14 +22,16 @@ def unwrap_n_replace(img_path: str):
                 img[i][j] = [0, 0, 0, 0]
     # cv2.imshow("output", img)
     output_filename = datetime.datetime.now().strftime('%Y%m%d%H%M%S') + ".png"
-    cv2.imwrite(BASE_PATH+output_filename, img)
+    cv2.imwrite(os.path.join(BASE_PATH, "", output_filename), img)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
     return output_filename
 
 
 def compare_img(img1path: str, img2path: str):
-    img1path = BASE_PATH + unwrap_n_replace(img_path=img1path)
+    if os.path.exists(img1path) is False or os.path.exists(img2path) is False:
+        return 0
+    img1path = os.path.join(BASE_PATH, "", unwrap_n_replace(img_path=img1path))
     img1 = cv2.imread(img1path)
     img2 = cv2.imread(img2path)
     size = (int(500), int(500))
@@ -77,14 +80,14 @@ def compare_img(img1path: str, img2path: str):
     return ssim
 
 
-def cal2(im1, im2):
-    img1_hist = cv2.calcHist(im1, [0], None, [256], [0, 255])
-    img2_hist = cv2.calcHist(im2, [0], None, [256], [0, 255])
-    ssim = 0
-    for i in range(len(img1_hist)):
-        if img1_hist[i] != img2_hist[i]:
-            ssim = ssim + (1 - (abs(img1_hist[i] - img2_hist[i]) / max(img1_hist, img2_hist)))
-        else:
-            ssim = ssim + 1
-    ssim = ssim / len(img1_hist)
-    return ssim
+# def cal2(im1, im2):
+#     img1_hist = cv2.calcHist(im1, [0], None, [256], [0, 255])
+#     img2_hist = cv2.calcHist(im2, [0], None, [256], [0, 255])
+#     ssim = 0
+#     for i in range(len(img1_hist)):
+#         if img1_hist[i] != img2_hist[i]:
+#             ssim = ssim + (1 - (abs(img1_hist[i] - img2_hist[i]) / max(img1_hist, img2_hist)))
+#         else:
+#             ssim = ssim + 1
+#     ssim = ssim / len(img1_hist)
+#     return ssim
