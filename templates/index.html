@@ -33,10 +33,10 @@
                 console.log(http_get.response)
                  if (http_get.status === 200 && http_get.response !== '' && http_get.readyState === 4) {
                      let resp = JSON.parse(http_get.response);
-                     var img = new Image();
+                     var img = new Image(200,200);
                      img.src = resp.filepath;
                      document.getElementById('server_upload_filename_right').innerText = resp.filename
-                     document.body.appendChild(img)
+                     document.getElementById('right').appendChild(img);
                  }
             }
         }
@@ -83,15 +83,15 @@
     <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
 
 
-    <div class="left">
+    <div class="left" id="left">
         <p>图1</p>
         <p id="server_upload_filename_left">null</p>
     </div>
 
-    <div class="right">
+    <div class="right" id="right">
         <p>图2</p>
-        <p id="server_upload_filename_right">null</p>
         <button onclick="op_unwrap_n_replace()">颜色处理</button>
+        <p id="server_upload_filename_right">null</p>
     </div>
 
     <!-- Turn all file input elements into ponds -->
@@ -107,14 +107,15 @@
                         onload: function (response) {
                             let resp = JSON.parse(response);
                             console.log("resp:", resp.filename);
-                            var img = new Image();
+                            var img = new Image(200,200);
                             {#img.src = 'static/png/' + resp.filename;#}
                             img.src = resp.filepath
-                            document.body.appendChild(img);
                             if (document.getElementById('server_upload_filename_left').innerText.trim() !== 'null') {
                                 document.getElementById('server_upload_filename_right').innerText = resp.filename;
+                                document.getElementById('right').appendChild(img);
                             } else {
                                 document.getElementById('server_upload_filename_left').innerText = resp.filename;
+                                document.getElementById('left').appendChild(img);
                             }
                         }
                     }
