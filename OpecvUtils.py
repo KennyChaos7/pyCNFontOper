@@ -34,6 +34,10 @@ def compare_img(img1path: str, img2path: str):
     img1path = os.path.join(BASE_PATH, "", unwrap_n_replace(img_path=img1path))
     img1 = cv2.imread(img1path)
     img2 = cv2.imread(img2path)
+    # cv2.imshow("img1_gray_mat", img1)
+    # cv2.imshow("img2_gray_mat", img2)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
     size = (int(500), int(500))
     img1 = cv2.resize(img1, size, cv2.INTER_AREA)
     img2 = cv2.resize(img2, size, cv2.INTER_AREA)
@@ -76,7 +80,25 @@ def compare_img(img1path: str, img2path: str):
     # ssim = np.sum((img1_gray_mat.astype("float") - img2_gray_mat.astype("float")) ** 2)
     # ssim /= float(img1_gray_mat.shape[0] * img1_gray_mat.shape[1])
 
-    ssim, _ = structural_similarity(img1_gray_mat, img2_gray_mat, full=True)
+    # ssim, _ = structural_similarity(img1_gray_mat, img2_gray_mat, full=True)
+
+    # 初始化ORB检测器
+    orb = cv2.ORB_create()
+    kp1, des1 = orb.detectAndCompute(img1_gray_mat, None)
+    kp2, des2 = orb.detectAndCompute(img2_gray_mat, None)
+
+    # 提取并计算特征点
+    bf = cv2.BFMatcher(cv2.NORM_HAMMING)
+
+    # knn筛选结果
+    matches = bf.knnMatch(des1, trainDescriptors=des2, k=2)
+
+    # 查看最大匹配点数目
+    good = [m for (m, n) in matches if m.distance < 0.55 * n.distance]
+    print(len(good))
+    print(len(matches))
+    ssim = len(good) / len(matches)
+    print("两张图片相似度为:%s" % ssim)
     return ssim
 
 
