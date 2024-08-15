@@ -86,5 +86,6 @@ def compare_img():
 
 if __name__ == '__main__':
     # os.makedirs(os.path.join(BASE_PATH, "", ""))
-    os.makedirs(BASE_PATH)
-    app.run()
+    if os.path.exists(BASE_PATH) is False:
+        os.makedirs(BASE_PATH)
+    app.run(host='0.0.0.0')
