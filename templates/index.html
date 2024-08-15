@@ -58,11 +58,23 @@
                 }
             }
         }
+
+        function remove_all_img_cache() {
+            console.log("remove_all_img_cache")
+            const http_get = new XMLHttpRequest()
+            const url = '/remove_all_img_cache?'
+            http_get.open("GET", url)
+            http_get.send()
+            http_get.onreadystatechange=(e)=>{
+                console.log(http_get.response)
+            }
+        }
     </script>
 </head>
 <body>
     <h1>Hello World!</h1>
     <button id="btn" onclick="compare_img()"><h2>对比重合率</h2></button>
+    <button id="btn" onclick="remove_all_img_cache()"><h2>删除全部缓存</h2></button>
     <!-- We'll transform this input into a pond -->
     <input type="file" class="filepond">
 
