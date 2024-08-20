@@ -6,6 +6,7 @@
     <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
 
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Web</title>
     <style>
         .left {
@@ -81,13 +82,12 @@
     </script>
 </head>
 <body>
-    <h1>Hello World!</h1>
+    <h1><p id="result_list"></p></h1>
     <button id="btn" onclick="compare_img()"><h2>对比重合率</h2></button>
     <button id="btn" onclick="remove_all_img_cache()"><h2>删除全部缓存</h2></button>
     <!-- We'll transform this input into a pond -->
     <div>
-        <input type="file" class="filepond">
-        <h2 ><p id="result_list"></p></h2>
+
     </div>
 
     <!-- Load FilePond library -->
@@ -98,19 +98,22 @@
     <div class="left" id="left">
         <p>图1</p>
         <p id="server_upload_filename_left">null</p>
+        <input type="file" class="filepond" id="file_left">
     </div>
 
     <div class="right" id="right">
         <p>图2</p>
         <button onclick="op_unwrap_n_replace()">颜色处理</button>
         <p id="server_upload_filename_right">null</p>
+        <input type="file" class="filepond" id="file_right">
     </div>
 
     <!-- Turn all file input elements into ponds -->
         <script>
-            var inputElement = document.querySelector('input[type="file"]');
             FilePond.registerPlugin(FilePondPluginImagePreview);
-            FilePond.setOptions({
+            var inputLeft = document.querySelector('input[id="file_left"]');
+            var pondLeft = FilePond.create(inputLeft)
+            pondLeft.setOptions({
                 // 设置单个URL是定义服务器配置的最基本形式。
                 server: {
                     url: '/upload_img',
@@ -120,15 +123,9 @@
                             let resp = JSON.parse(response);
                             console.log("resp:", resp.filename);
                             var img = new Image(200,200);
-                            {#img.src = 'static/png/' + resp.filename;#}
                             img.src = resp.filepath
-                            if (document.getElementById('server_upload_filename_left').innerText.trim() !== 'null') {
-                                document.getElementById('server_upload_filename_right').innerText = resp.filename;
-                                document.getElementById('right').appendChild(img);
-                            } else {
-                                document.getElementById('server_upload_filename_left').innerText = resp.filename;
-                                document.getElementById('left').appendChild(img);
-                            }
+                            document.getElementById('server_upload_filename_left').innerText = resp.filename;
+                            document.getElementById('left').appendChild(img);
                         }
                     }
                 },
@@ -143,11 +140,40 @@
                 maxFileSize: null,
 
                 // 启用或禁用提取EXIF信息
-                allowImageExifOrientation: true
+                allowImageExifOrientation: true}
+            );
 
-            });
-            FilePond.create(inputElement)
+            var inputRight = document.querySelector('input[id="file_right"]');
+            var pondRight = FilePond.create(inputRight)
+            pondRight.setOptions({
+                // 设置单个URL是定义服务器配置的最基本形式。
+                server: {
+                    url: '/upload_img',
+                    process: {
+                        //处理图片上传接口的返回内容
+                        onload: function (response) {
+                            let resp = JSON.parse(response);
+                            console.log("resp:", resp.filename);
+                            var img = new Image(200,200);
+                            img.src = resp.filepath
+                            document.getElementById('server_upload_filename_right').innerText = resp.filename;
+                            document.getElementById('right').appendChild(img);
+                        }
+                    }
+                },
+                // 设置图片类型只能为png才能上传
+                allowFileTypeValidation: true,
+                acceptedFileTypes: "image/png",
+                // 启用或禁用图像裁剪
+                allowImageCrop: true,
+
+                // 启用或禁用文件大小验证
+                allowFileSizeValidation: true,
+                maxFileSize: null,
+
+                // 启用或禁用提取EXIF信息
+                allowImageExifOrientation: true}
+            );
         </script>
-
 </body>
 </html>
