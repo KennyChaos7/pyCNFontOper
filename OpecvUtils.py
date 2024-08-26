@@ -3,7 +3,7 @@ import cv2
 import datetime
 import os
 from skimage.metrics import structural_similarity
-BASE_PATH = 'static/png'
+BASE_PATH = os.path.join(os.path.dirname(__file__), 'static', 'png')
 
 
 def unwrap_n_replace(img_path: str):
