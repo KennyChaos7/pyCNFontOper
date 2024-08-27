@@ -50,8 +50,6 @@ def remove_all_img_cache():
 @app.route('/op_unwrap_n_replace', methods=['GET',])
 def unwrap_n_replace():
     filename = request.args.get('filename')
-    # print(filename)
-    # opencv_utils.unwrap_n_replace('png/20240808161848.png')
     output_filename = opencv_utils.unwrap_n_replace(
         os.path.join(BASE_PATH, "", filename)
     )
@@ -61,13 +59,29 @@ def unwrap_n_replace():
 @app.route('/op_unwrap_n_replace_2', methods=['GET',])
 def unwrap_n_replace_2():
     filename = request.args.get('filename')
-    # print(filename)
-    # opencv_utils.unwrap_n_replace('png/20240808161848.png')
     output_filename = opencv_utils.unwrap_n_replace(
         os.path.join(BASE_PATH, "", filename)
     )
-    # return json.dumps({'filename':output_filename}), 200, {'ContentType':'application/json'}
     return send_from_directory(BASE_PATH, output_filename, as_attachment=True)
+
+
+@app.route('/op_unwrap_green_replace', methods=['GET',])
+def op_unwrap_green_replace():
+    filename = request.args.get('filename')
+    output_filename = opencv_utils.remove_green_from_img(
+        os.path.join(BASE_PATH, "", filename)
+    )
+    return json.dumps({'filename': output_filename, 'filepath': BASE_PATH + "/" + output_filename}), 200, {'ContentType':'application/json'}
+
+
+@app.route('/op_unwrap_green_replace_2', methods=['GET',])
+def op_unwrap_green_replace_2():
+    filename = request.args.get('filename')
+    output_filename = opencv_utils.remove_green_from_img(
+        os.path.join(BASE_PATH, "", filename)
+    )
+    return send_from_directory(BASE_PATH, output_filename, as_attachment=True)
+
 
 
 @app.route('/compare_img', methods=['GET',])

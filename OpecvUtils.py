@@ -6,6 +6,25 @@ from skimage.metrics import structural_similarity
 BASE_PATH = 'static/png'
 
 
+def remove_green_from_img(img_path: str):
+    img = cv2.imread(img_path)
+    hsv_mat = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
+    min_mat = np.array([50, 100, 100])
+    max_mat = np.array([70, 255, 255])
+    mask = cv2.inRange(hsv_mat, min_mat, max_mat)
+    mask_not = cv2.bitwise_not(mask)
+    # green_mat = cv2.bitwise_and(img, img, mask=mask)
+    green_not_mat = cv2.bitwise_and(img, img, mask=mask_not)
+    b,g,r = cv2.split(green_not_mat)
+    bgra = cv2.merge([b, g, r, mask_not])
+    output_filename = datetime.datetime.now().strftime('%Y%m%d%H%M%S') + ".png"
+    cv2.imwrite(os.path.join(BASE_PATH, "", output_filename), bgra)
+    # cv2.imshow('bgra', bgra)
+    # cv2.waitKey()
+    # cv2.destroyAllWindows()
+    return output_filename
+
+
 def unwrap_n_replace(img_path: str):
     img = cv2.imread(img_path)
     gray_mat = cv2.cvtColor(img, cv2.COLOR_BGRA2GRAY)
