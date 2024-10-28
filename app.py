@@ -65,6 +65,31 @@ def unwrap_n_replace_2():
     return send_from_directory(BASE_PATH, output_filename, as_attachment=True)
 
 
+@app.route('/op_unwrap_color_replace', methods=['GET',])
+def op_unwrap_color_replace():
+    filename = request.args.get('filename')
+    r = int(request.args.get('red'))
+    g = int(request.args.get('green'))
+    b = int(request.args.get('blue'))
+    output_filename = opencv_utils.unwrap_color_replace(
+        os.path.join(BASE_PATH, "", filename), [b, g, r]
+    )
+    return json.dumps({'filename': output_filename, 'filepath': BASE_PATH + "/" + output_filename}), 200, {
+        'ContentType': 'application/json'}
+
+
+@app.route('/op_unwrap_color_replace_2', methods=['GET',])
+def op_unwrap_color_replace_2():
+    filename = request.args.get('filename')
+    r = int(request.args.get('red'))
+    g = int(request.args.get('green'))
+    b = int(request.args.get('blue'))
+    output_filename = opencv_utils.unwrap_color_replace(
+        os.path.join(BASE_PATH, "", filename), [b, g, r]
+    )
+    return send_from_directory(BASE_PATH, output_filename, as_attachment=True)
+
+
 @app.route('/op_unwrap_green_replace', methods=['GET',])
 def op_unwrap_green_replace():
     filename = request.args.get('filename')
@@ -81,7 +106,6 @@ def op_unwrap_green_replace_2():
         os.path.join(BASE_PATH, "", filename)
     )
     return send_from_directory(BASE_PATH, output_filename, as_attachment=True)
-
 
 
 @app.route('/compare_img', methods=['GET',])

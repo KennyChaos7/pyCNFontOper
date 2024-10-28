@@ -79,6 +79,25 @@
                 console.log(http_get.response)
             }
         }
+
+        function op_unwrap_color_replace() {
+            console.log("op_unwrap_color_replace")
+            var f1 = document.getElementById('server_upload_filename_left').innerText.trim()
+            const http_get = new XMLHttpRequest()
+            const url = '/op_unwrap_color_replace?filename='+f1+'&red=47&green=79&blue=79'
+            http_get.open("GET", url)
+            http_get.send()
+            http_get.onreadystatechange=(e)=>{
+                console.log(http_get.response)
+                 if (http_get.status === 200 && http_get.response !== '' && http_get.readyState === 4) {
+                     let resp = JSON.parse(http_get.response);
+                     var img = new Image(200,200);
+                     img.src = resp.filepath;
+                     document.getElementById('server_upload_filename_left').innerText = resp.filename
+                     document.getElementById('left').appendChild(img);
+                 }
+            }
+        }
     </script>
 </head>
 <body>
@@ -99,6 +118,7 @@
         <p>图1</p>
         <p id="server_upload_filename_left">null</p>
         <input type="file" class="filepond" id="file_left">
+        <button onclick="op_unwrap_color_replace()">颜色处理为 rgb = [47,79,79] </button>
     </div>
 
     <div class="right" id="right">

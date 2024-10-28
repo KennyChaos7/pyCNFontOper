@@ -26,13 +26,17 @@ def remove_green_from_img(img_path: str):
 
 
 def unwrap_n_replace(img_path: str):
+    return unwrap_color_replace(img_path=img_path, bgr=[55, 67, 188])
+
+
+def unwrap_color_replace(img_path: str, bgr):
     img = cv2.imread(img_path)
-    gray_mat = cv2.cvtColor(img, cv2.COLOR_BGRA2GRAY)
+    gray_mat = cv2.cvtColor(img, cv2.COLOR_RGBA2GRAY)
     _, mask = cv2.threshold(gray_mat, 50.0, 255.0, cv2.THRESH_BINARY)
     img[mask > 0] = [0, 0, 0]
-    img[mask == 0] = [55, 67, 188]
+    img[mask == 0] = bgr
     # cv2.imshow("output_", img)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2BGRA)
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2RGBA)
     width, height, channel = img.shape
     for i in range(width):
         for j in range(height):
@@ -40,10 +44,15 @@ def unwrap_n_replace(img_path: str):
             if r == 0 and g == 0 and b == 0:
                 img[i][j] = [0, 0, 0, 0]
     # cv2.imshow("output", img)
-    output_filename = datetime.datetime.now().strftime('%Y%m%d%H%M%S') + ".png"
-    cv2.imwrite(os.path.join(BASE_PATH, "", output_filename), img)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
+    output_filename = datetime.datetime.now().strftime('%Y%m%d%H%M%S') + ".png"
+    cv2.imwrite(os.path.join(BASE_PATH, "", output_filename), img)
+    # img = cv2.imread(os.path.join(BASE_PATH, "", output_filename), cv2.COLOR_BGRA2RGBA)
+    # cv2.imshow("output", img)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    # cv2.imwrite(os.path.join(BASE_PATH, "", output_filename), img)
     return output_filename
 
 
